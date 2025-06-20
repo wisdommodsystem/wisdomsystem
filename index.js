@@ -112,7 +112,7 @@ client.cooldowns = new Collection();
 
 // Load commands
 const commandsPath = path.join(__dirname, 'commands');
-const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+const commandFiles = fs.existsSync(commandsPath) ? fs.readdirSync(commandsPath).filter(file => file.endsWith('.js')) : [];
 
 for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file);
@@ -136,7 +136,7 @@ for (const file of commandFiles) {
 
 // Load events
 const eventsPath = path.join(__dirname, 'events');
-const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
+const eventFiles = fs.existsSync(eventsPath) ? fs.readdirSync(eventsPath).filter(file => file.endsWith('.js')) : [];
 
 for (const file of eventFiles) {
   const filePath = path.join(eventsPath, file);
@@ -160,3 +160,16 @@ process.on('SIGINT', async () => {
 
 // Login to Discord
 client.login(process.env.TOKEN);
+
+// ====== Render Fix: Fake Web Server ======
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => {
+  res.send('🤖 Wisdom Bot is running!');
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🌐 Fake web server listening on port ${PORT}`);
+});
